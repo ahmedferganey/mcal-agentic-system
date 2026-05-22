@@ -1,29 +1,153 @@
-# AI MCAL Multi-Agent System
+# 🚀 AI-Powered MCAL Agentic System
+### Small LLM Fine-Tuning + Agentic Architecture for AUTOSAR Timer Driver Development
+
+---
+
+## 📌 Overview
+
+This project builds a **production-grade AI system** for generating **AUTOSAR MCAL Timer (GPT) driver code** using **small, optimized LLMs (200–500 MB)**.
+
+**🎯 Focus Module:** Timer/GPT (General Purpose Timer)
+
+The system is designed for:
+* Embedded constraints (low memory, CPU-only inference)
+* Deterministic and compilable C code
+* AUTOSAR-compliant Timer driver outputs
+* Agent-based decomposition for reliability
+* Single-module mastery before scaling
+
+### Why Timer Module?
+
+* ✅ **Well-defined scope:** initialization, configuration, start/stop, notification
+* ✅ **Clear register mappings:** prescaler, reload, control registers
+* ✅ **Measurable success criteria:** compilable code, correct timing calculations
+* ✅ **Foundation pattern:** applicable to other time-critical modules (PWM, WDG)
+* ✅ **Manageable complexity:** ideal for validating small LLM capabilities
+
+---
+
+## 🧭 Project Phases
+
+The system is developed in **two major phases**:
+
+---
+
+# 🧪 Phase 1: Experimental (Colab-Based Research)
+
+This phase focuses on **rapid experimentation, iteration, and validation** using notebooks.
+
+### 📂 Structure
+
+```
+experimental/
+├── colab-agents/        # Agent workflows for Timer generation
+├── colab-finetuning/    # QLoRA / LoRA training notebooks
+└── README.md
+```
+
+---
+
+## 🔬 Objectives
+
+* Validate small LLM capability for **Timer MCAL generation**
+* Experiment with prompt engineering for Timer-specific tasks
+* Build initial agent pipelines focused on Timer workflow
+* Fine-tune models using Timer driver datasets
+* Evaluate generation quality on Timer code
+
+---
+
+## 🧠 Experimental Components
+
+### 1. Colab Finetuning
+
+**Focus:** Train model on Timer-specific datasets
+
+Implements:
+* Timer driver dataset preparation (STM32, NXP, Infineon)
+* Instruction tuning (Timer task → Timer code)
+* QLoRA training pipeline
+
+**Dataset Examples:**
+```
+[INPUT]
+Generate Timer initialization for STM32 with 1ms period, prescaler 84
+
+[OUTPUT]
+void Gpt_Init(const Gpt_ConfigType* ConfigPtr) {
+    TIM2->PSC = 84 - 1;
+    TIM2->ARR = 1000 - 1;
+    TIM2->CR1 |= TIM_CR1_CEN;
+}
+```
+
+#### Output:
+* LoRA adapters for Timer generation
+* Evaluation metrics on Timer code quality
+
+---
+
+### 2. Colab Agents
+
+**Focus:** Timer-specific agent system
+
+Implements:
+* **Planner** → breaks Timer tasks (init, start, stop, get elapsed time)
+* **Generator** → produces Timer driver code
+* **Validator** → checks Timer register correctness
+
+**Example Tasks:**
+* "Initialize Timer with 10ms period"
+* "Configure Timer for interrupt notification"
+* "Calculate prescaler for given frequency"
+
+---
+
+## ⚙️ Experimental Workflow
+
+1. Prepare Timer driver dataset (AUTOSAR + vendor SDKs)
+2. Train model using QLoRA on Timer examples
+3. Run Timer agent pipeline inside notebook
+4. Evaluate Timer code outputs
+5. Iterate on Timer-specific prompts
+
+---
+
+## 📊 Experimental Metrics
+
+* ✅ **Compilation success rate** (Timer code compiles)
+* ✅ **Register correctness** (valid Timer registers)
+* ✅ **Timing calculation accuracy** (prescaler, period)
+* ✅ **Hallucination rate** (invalid Timer peripherals)
+* ✅ **Token efficiency** (concise Timer code)
+
+---
+
+# 🏭 Phase 2: Production System
 
 ## 🚀 Overview
 
-AI MCAL Agent is a production-grade multi-agent system designed to automate and accelerate **AUTOSAR MCAL (Microcontroller Abstraction Layer)** development.
+AI MCAL Agent is a production-grade multi-agent system designed to automate and accelerate **AUTOSAR Timer MCAL development**.
 
 The system leverages LLM-powered agents to:
+* Parse Timer peripheral datasheets
+* Generate Timer MCAL-compliant driver code
+* Validate against MISRA & AUTOSAR Timer specifications
+* Debug Timer configuration issues
 
-* Parse microcontroller datasheets
-* Generate MCAL-compliant driver code
-* Validate against MISRA & AUTOSAR rules
-* Debug low-level hardware issues
-
-This project bridges **embedded systems engineering** and **AI agent orchestration**, enabling intelligent, data-driven development workflows.
+This project bridges **embedded systems engineering** and **AI agent orchestration**, focusing on **mastering Timer generation** before expanding.
 
 ---
 
 ## 🧠 System Architecture
 
-The system follows a **multi-agent architecture** where each agent has a specialized responsibility:
+The system follows a **multi-agent architecture** specialized for Timer development:
 
-* **Planner Agent** → Decides workflow
-* **Datasheet Agent** → Extracts hardware knowledge
-* **Codegen Agent** → Generates MCAL drivers
-* **Validation Agent** → Ensures compliance
-* **Debug Agent** → Diagnoses issues
+* **Planner Agent** → Decides Timer workflow (init, start, stop, notify)
+* **Datasheet Agent** → Extracts Timer hardware knowledge (registers, modes)
+* **Codegen Agent** → Generates Timer MCAL drivers
+* **Validation Agent** → Ensures Timer AUTOSAR/MISRA compliance
+* **Debug Agent** → Diagnoses Timer timing and configuration issues
 
 All agents are orchestrated via a graph-based execution engine.
 
@@ -31,12 +155,12 @@ All agents are orchestrated via a graph-based execution engine.
 
 ## ⚙️ Tech Stack
 
-* Python
-* FastAPI (API serving)
-* LangGraph (multi-agent orchestration)
-* LangChain (LLM abstraction)
-* Vector DB (Qdrant / FAISS)
-* Docker + Kubernetes (deployment)
+* **Python** - Core language
+* **FastAPI** - API serving
+* **LangGraph** - Multi-agent orchestration
+* **LangChain** - LLM abstraction
+* **Vector DB** (Qdrant / FAISS) - Timer datasheet embeddings
+* **Docker + Kubernetes** - Deployment
 
 ---
 
@@ -44,238 +168,179 @@ All agents are orchestrated via a graph-based execution engine.
 
 ```
 ai-mcal-agent/
+├── agents
+│   ├── codegen_agent
+│   │   ├── agent.py
+│   │   ├── prompts.py           # Timer-specific prompts
+│   │   └── templates
+│   │       └── timer_templates/  # Timer code templates
+│   ├── datasheet_agent
+│   │   ├── agent.py
+│   │   ├── parser.py             # Timer register parser
+│   │   └── prompts.py
+│   ├── debug_agent
+│   │   ├── agent.py
+│   │   └── analyzers
+│   │       ├── timer_timing_analysis.py
+│   │       └── timer_register_analysis.py
+│   ├── planner_agent
+│   │   ├── agent.py
+│   │   └── prompts.py            # Timer task planning
+│   └── validation_agent
+│       ├── agent.py
+│       └── rules
+│           ├── autosar_timer_rules.py
+│           └── misra_rules.py
+├── apps
+│   ├── api
+│   ├── cli
+│   └── playground
+├── configs
+│   ├── agents.yaml
+│   ├── models.yaml
+│   └── rag.yaml
+├── deployments
+│   ├── docker
+│   └── k8s
+├── docs
+│   ├── plan.md
+│   └── setup.sh
+├── evaluation
+│   ├── benchmarks
+│   │   └── timer_cases.json      # Timer-specific test cases
+│   ├── metrics
+│   │   ├── correctness.py        # Timer register validation
+│   │   ├── timing_accuracy.py    # Prescaler/period checks
+│   │   └── latency.py
+│   └── runner.py
+├── experimental
+│   ├── colab-agents
+│   ├── colab-finetuning
+│   └── README.md
+├── knowledge
+│   ├── autosar
+│   │   ├── guidelines
+│   │   └── mcal_specs
+│   │       └── timer_gpt_spec/   # Timer AUTOSAR specs
+│   ├── datasheets
+│   │   ├── infineon
+│   │   │   └── timer_registers/
+│   │   ├── nxp
+│   │   │   └── timer_registers/
+│   │   └── stm32
+│   │       └── timer_registers/
+│   └── examples
+│       ├── configs
+│       │   └── timer_configs/
+│       └── drivers
+│           └── timer_drivers/
+├── memory
+│   ├── long_term
+│   └── short_term
+├── observability
+│   ├── callbacks.py
+│   └── tracing.py
+├── orchestration
+│   ├── executor.py
+│   ├── graph.py
+│   ├── router.py
+│   └── state.py
+├── scripts
+│   ├── build_index.py
+│   └── ingest_timer_datasheets.py
+├── tests
+│   ├── agents
+│   │   └── test_timer_codegen.py
+│   ├── orchestration
+│   └── tools
+│       └── test_timer_validation.py
+└── tools
+    ├── code_tools
+    │   ├── c_parser.py
+    │   ├── formatter.py
+    │   └── static_analysis.py
+    ├── hardware
+    │   ├── timer_models.py        # Timer peripheral models
+    │   └── timer_register_map.py
+    ├── rag
+    │   ├── embeddings.py
+    │   ├── retriever.py
+    │   └── vectorstore.py
+    └── utils
+        ├── config.py
+        └── logging.py
 ```
 
-### 1. apps/
-
-**Purpose:** Entry points for interacting with the system
-
-* `api/` → Production FastAPI service
-* `cli/` → Local command-line interface
-* `playground/` → Experimental notebooks / UI
-
 ---
 
-### 2. agents/
-
-**Purpose:** Core intelligence of the system (modular agents)
-
-#### datasheet_agent/
-
-* Extracts structured data from PDFs
-* Converts raw datasheets → register maps
-
-#### codegen_agent/
-
-* Generates MCAL drivers
-* Uses templates + retrieved context
-
-#### validation_agent/
-
-* Enforces:
-
-  * MISRA C rules
-  * AUTOSAR compliance
-
-#### debug_agent/
-
-* Analyzes:
-
-  * Register dumps
-  * Timing issues
-
-#### planner_agent/
-
-* Decides execution flow
-* Routes tasks between agents
-
----
-
-### 3. orchestration/
-
-**Purpose:** Multi-agent coordination layer
-
-* `graph.py` → Defines workflow graph
-* `state.py` → Shared state across agents
-* `router.py` → Decision logic
-* `executor.py` → Runs pipelines
-
----
-
-### 4. tools/
-
-**Purpose:** Shared utilities used by all agents
-
-#### rag/
-
-* Retrieval system for datasheets
-* Embeddings + vector search
-
-#### code_tools/
-
-* C parsing
-* Formatting
-* Static analysis
-
-#### hardware/
-
-* Register abstractions
-* Peripheral models
-
-#### utils/
-
-* Logging
-* Configuration management
-
----
-
-### 5. knowledge/
-
-**Purpose:** Domain knowledge base (RAG input)
-
-* `datasheets/` → MCU reference manuals
-* `autosar/` → MCAL specifications
-* `examples/` → Reference drivers
-
----
-
-### 6. memory/
-
-**Purpose:** Agent memory (optional)
-
-* `short_term/` → Session context
-* `long_term/` → Persistent knowledge
-
----
-
-### 7. evaluation/
-
-**Purpose:** System benchmarking & validation (critical)
-
-#### benchmarks/
-
-* Test scenarios (ADC, SPI, etc.)
-
-#### metrics/
-
-* correctness
-* latency
-* hallucination detection
-
-#### runner.py
-
-* Executes evaluation pipelines
-
----
-
-### 8. configs/
-
-**Purpose:** Central configuration
-
-* `agents.yaml` → Agent definitions
-* `models.yaml` → LLM configs
-* `rag.yaml` → Retrieval settings
-
----
-
-### 9. tests/
-
-**Purpose:** Quality assurance
-
-* Unit tests
-* Integration tests
-
----
-
-### 10. observability/
-
-**Purpose:** Monitoring & tracing
-
-* Execution traces
-* Debug callbacks
-
----
-
-### 11. deployments/
-
-**Purpose:** Infrastructure setup
-
-* Docker configs
-* Kubernetes manifests
-
----
-
-### 12. scripts/
-
-**Purpose:** Utility scripts
-
-* Datasheet ingestion
-* Index building
-
----
-
-## 🔄 Workflow Example
-
-1. User request: "Initialize ADC"
-2. Planner Agent selects workflow
-3. Datasheet Agent retrieves register info
-4. Codegen Agent generates driver
-5. Validation Agent checks compliance
-6. Debug Agent (optional) analyzes issues
-7. Final output returned
+## 🔄 Timer-Focused Workflow Example
+
+1. **User request:** "Initialize Timer2 with 1ms period on STM32F4"
+2. **Planner Agent** identifies Timer initialization task
+3. **Datasheet Agent** retrieves Timer2 register info (TIMx->PSC, TIMx->ARR)
+4. **Codegen Agent** generates Timer driver code
+5. **Validation Agent** checks AUTOSAR Timer compliance
+6. **Debug Agent** (if needed) analyzes timing calculations
+7. **Final Timer code** returned to user
 
 ---
 
 ## 📊 Evaluation Strategy
 
-The system includes a built-in evaluation framework:
+The system includes a Timer-focused evaluation framework:
 
-* Benchmark tasks (ADC, SPI, UART)
-* Metrics:
+**Benchmark Tasks:**
+* Timer initialization (various periods: 1ms, 10ms, 100ms)
+* Timer start/stop operations
+* Timer overflow interrupt configuration
+* Timer notification callbacks
+* Prescaler calculation accuracy
 
-  * Register correctness
-  * Code quality
-  * Latency
-  * Hallucination rate
+**Metrics:**
+* ✅ Timer register correctness
+* ✅ Timing calculation accuracy (frequency, period)
+* ✅ Code quality (MISRA compliance)
+* ✅ Latency (generation time)
+* ✅ Hallucination rate (invalid Timer peripherals)
 
 ---
 
 ## 🧪 Running the Project
 
 ### Install
-
 ```bash
 pip install -r requirements.txt
 ```
 
 ### Run API
-
 ```bash
 uvicorn apps.api.main:app --reload
 ```
 
 ### Run CLI
-
 ```bash
-python apps/cli/main.py
+python apps/cli/main.py "Generate Timer initialization with 1ms period"
 ```
 
 ---
 
 ## 🧱 Design Principles
 
-* Modular agents (plug & play)
-* Separation of concerns
-* Retrieval-first reasoning (RAG)
-* Deterministic + explainable outputs
+* **Single module mastery** → Perfect Timer before expanding
+* **Modular agents** → Plug & play architecture
+* **Separation of concerns** → Each agent has clear Timer responsibility
+* **Retrieval-first reasoning** → RAG with Timer datasheets
+* **Deterministic outputs** → Reliable Timer code generation
 
 ---
 
-## 🚀 Future Enhancements
+## 🚀 Future Enhancements (After Timer Mastery)
 
-* Hardware-in-the-loop validation
+* Expand to PWM module (Timer-related)
+* Add Watchdog (WDG) module
+* Hardware-in-the-loop Timer validation
 * AUTOSAR toolchain integration
-* Real-time debugging agents
+* Real-time Timer debugging agents
 * CI/CD evaluation pipelines
 
 ---
@@ -283,21 +348,32 @@ python apps/cli/main.py
 ## 💡 Key Value Proposition
 
 This project enables:
-
-* Faster MCAL development
-* Reduced human error in register config
-* Scalable embedded engineering workflows
-* AI-assisted safety-critical software development
+* ✅ Faster Timer MCAL development
+* ✅ Reduced human error in Timer register configuration
+* ✅ Scalable approach to embedded engineering
+* ✅ AI-assisted Timer driver generation
+* ✅ **Focused, measurable progress** on one module
 
 ---
 
-## 📌 Conclusion
+## 🏁 Conclusion
 
-AI MCAL Agent represents a next-generation approach to embedded systems development by combining:
+AI MCAL Agent represents a next-generation approach to embedded systems development by:
 
-* Low-level hardware expertise
-* AI multi-agent systems
-* Production-grade backend architecture
+* **Starting small:** Master Timer module first
+* **Proving value:** Demonstrate small LLM effectiveness
+* **Building foundation:** Establish patterns for other modules
+* **Achieving reliability:** Production-grade Timer code generation
 
-This makes it a **high-impact, rare, and technically deep project** suitable for top-tier engineering roles.
+This makes it a **high-impact, focused, and technically deep project** with clear success criteria.
 
+---
+
+## 📌 Next Steps
+
+1. ✅ Complete Timer dataset collection
+2. ✅ Fine-tune model on Timer examples
+3. ✅ Build Timer-specific agent workflows
+4. ✅ Validate Timer code generation quality
+5. ⏳ Achieve >90% Timer compilation success
+6. ⏳ Expand to next module (PWM)
